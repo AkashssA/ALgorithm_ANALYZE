@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://127.0.0.1:5000';
+const API_BASE = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_BASE || 'http://127.0.0.1:5000';
 
 const ALGORITHMS = [
   { label: 'Merge Sort (with Tree)', value: 'merge-sort' },
@@ -690,7 +690,6 @@ function TopoGraph({ matrix, order }) {
   const height = 120;
   const nodeY = 60;
   // Map topological order to highlight
-  const orderSet = new Set(order);
   return (
     <svg width={width} height={height} style={{ display: 'block', margin: '24px auto', background: '#f8fafc', borderRadius: 12, boxShadow: '0 2px 8px #0001' }}>
       {/* Edges */}
@@ -803,7 +802,7 @@ function QuickSortDiagram({ steps, stepIndex }) {
   // Find the most recent array state up to this step
   for (let i = stepIndex; i >= 0; i--) {
     const s = steps[i];
-    const arrMatch = s.match(/Partitioning: (\[.*\]), pivot=(\-?\d+)/);
+    const arrMatch = s.match(/Partitioning: (\[.*\]), pivot=(-?\d+)/);
     if (arrMatch) {
       try { arr = JSON.parse(arrMatch[1]); pivot = parseInt(arrMatch[2]); break; } catch {}
     }
@@ -836,7 +835,7 @@ function QuickSortDiagram({ steps, stepIndex }) {
     // Try to find a line with 'pivot=' in it
     for (let i = stepIndex; i >= 0; i--) {
       const s = steps[i];
-      const pivotMatch = s.match(/pivot=(\-?\d+)/);
+      const pivotMatch = s.match(/pivot=(-?\d+)/);
       if (pivotMatch) { pivot = parseInt(pivotMatch[1]); break; }
     }
   }
@@ -888,7 +887,7 @@ function IntroCarousel() {
   React.useEffect(() => {
     const timer = setTimeout(() => setIdx((idx + 1) % cards.length), 3500);
     return () => clearTimeout(timer);
-  }, [idx]);
+  }, [idx, cards.length]);
   return (
     <div style={{
       maxWidth: 600,
@@ -1106,6 +1105,7 @@ function App() {
         <h1 style={{ margin: 0, fontWeight: 900, fontSize: '2.5rem', letterSpacing: '2px', color: '#fff', textShadow: '0 2px 8px #232f3e55' }}>Algorithm Analyzer</h1>
       </header>
       <main style={{ maxWidth: 900, margin: '2rem auto', padding: '2rem', background: 'white', borderRadius: 16, boxShadow: '0 4px 24px #0001' }}>
+        <IntroCarousel />
         <h2 style={{ color: '#232f3e' }}>Algorithm Visualizer</h2>
         <div style={{ margin: '2rem 0', padding: '1rem', background: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
           <label style={{ fontWeight: 600, color: '#232f3e' }}>Select Algorithm:</label>
