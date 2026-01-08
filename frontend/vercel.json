@@ -4,7 +4,7 @@
     { "src": "package.json", "use": "@vercel/static-build" }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!static|favicon\\.ico|manifest\\.json|asset-manifest\\.json|logo192\\.png|logo512\\.png).*)", "destination": "/index.html" }
   ]
 }
 
