@@ -9,6 +9,71 @@ from backend.algorithms.quick_sort import quick_sort
 app = Flask(__name__)
 CORS(app)
 
+# Get port from environment variable for deployment platforms like Render
+port = int(os.environ.get("PORT", 5000))
+
+# ---------------- Helper Utilities for Input Normalization -----------------
+
+def normalize_matrix(matrix, diagonal_zero=True, treat_zero_as_inf=False):
+    """Normalize adjacency matrix values.
+    - Convert 'inf'/'Infinity'/None to float('inf')
+    - Convert numeric-like strings to floats
+    - Ensure diagonal entries are 0 when diagonal_zero=True
+    - Optionally treat zeros as infinity for non-diagonal cells
+    """
+    n = len(matrix)
+    norm = []
+    for i in range(n):
+        row = []
+        for j in range(n):
+            val = matrix[i][j]
+            if isinstance(val, str):
+                s = val.strip().lower()
+                if s in ('inf', 'infinity'):
+                    val = float('inf')
+                elif s in ('nan', 'none', 'null', ''):
+                    val = float('inf') if treat_zero_as_inf else 0
+                else:
+                    try:
+                        val = float(val)
+                    except Exception:
+                        val = float('inf') if treat_zero_as_inf else 0
+            elif val is None:
+                val = float('inf') if treat_zero_as_inf else 0
+            # Diagonal handling
+            if diagonal_zero and i == j:
+                val = 0
+            # Treat zeros as inf for non-diagonal when requested (e.g., Floyd-Warshall style)
+            if treat_zero_as_inf and i != j:
+                val = float('inf') if val == 0 else val
+            row.append(val)
+        norm.append(row)
+    return norm
+
+def is_edge_value(val):
+    """Return True if there is an edge for the given adjacency value.
+    Edge exists when value is finite and non-zero.
+    Handles strings like 'inf', '0', and None safely.
+    """
+    if isinstance(val, str):
+        s = val.strip().lower()
+        if s in ('inf', 'infinity', 'nan', 'none', 'null', '0'):
+            return False
+        try:
+            val = float(val)
+        except Exception:
+            return False
+    if val is None:
+        return False
+    if isinstance(val, (int, float)):
+        if val == 0:
+            return False
+        if val == float('inf') or val != val:  # inf or NaN
+            return False
+        return True
+    return bool(val)
+
+# ---------------------------------------------------------------------------
 def merge_sort_steps(arr):
     steps = []
     def ms(a, l, r, depth=0):
@@ -201,6 +266,18 @@ def api_floyd_warshall():
             row = []
             for j in range(n):
                 val = matrix[i][j]
+                # Normalize inputs including strings like 'inf' and numeric strings
+                if isinstance(val, str):
+                    s = val.strip().lower()
+                    if s in ('inf', 'infinity'):
+                        val = float('inf')
+                    elif s == '0':
+                        val = 0
+                    else:
+                        try:
+                            val = float(val)
+                        except Exception:
+                            val = 0
                 if i == j:
                     row.append(0)
                 elif val == 0:
@@ -215,9 +292,24 @@ def api_floyd_warshall():
 
 def warshall_steps(matrix):
     n = len(matrix)
-    closure = [row[:] for row in matrix]
+    # Ensure closure values are integers 0/1
+    closure = []
+    for i in range(n):
+        row = []
+        for j in range(n):
+            x = matrix[i][j]
+            if isinstance(x, str):
+                x = x.strip()
+            if x in (0, '0'):
+                row.append(0)
+            elif x in (1, '1'):
+                row.append(1)
+            else:
+                # Any non-binary value is treated as 0 (no edge)
+                row.append(0)
+        closure.append(row)
     steps = [f"Initial matrix: {closure}"]
-    matrices = [[row[:] for row in closure]]
+    matrices = [[r[:] for r in closure]]
     for k in range(n):
         steps.append(f"Using node {k} as intermediate:")
         for i in range(n):
@@ -226,7 +318,7 @@ def warshall_steps(matrix):
                     if not closure[i][j]:
                         steps.append(f"  Path from {i} to {j} via {k} found. Set closure[{i}][{j}] = 1")
                     closure[i][j] = 1
-        matrices.append([row[:] for row in closure])
+        matrices.append([r[:] for r in closure])
     steps.append(f"Transitive closure: {closure}")
     return steps, closure, matrices
 
@@ -237,22 +329,25 @@ def api_warshall():
     if not (isinstance(matrix, list) and all(isinstance(row, list) and len(row) == len(matrix) for row in matrix)):
         return jsonify({'error': 'Input must be a square adjacency matrix.'}), 400
     try:
-        # Ensure all values are 0 or 1
+        # Accept 0/1 values as ints or strings
         for row in matrix:
             for x in row:
-                if x not in (0, 1):
+                if not (x in (0, 1) or (isinstance(x, str) and x.strip() in ('0', '1'))):
                     return jsonify({'error': 'Matrix must contain only 0 or 1.'}), 400
         steps, closure, matrices = warshall_steps(matrix)
         return jsonify({'result': closure, 'steps': steps, 'matrices': matrices})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+        
+# Kahn's algorithm with robust edge checks
+
 def topo_sort_kahn_steps(matrix):
     n = len(matrix)
     indegree = [0]*n
     for i in range(n):
         for j in range(n):
-            if matrix[i][j]:
+            if is_edge_value(matrix[i][j]):
                 indegree[j] += 1
     order = []
     steps = [f"Initial indegrees: {indegree}"]
@@ -263,7 +358,7 @@ def topo_sort_kahn_steps(matrix):
         order.append(u)
         steps.append(f"Remove vertex {u}, current order: {order}")
         for v in range(n):
-            if matrix[u][v]:
+            if is_edge_value(matrix[u][v]):
                 indegree[v] -= 1
                 steps.append(f"  Decrement indegree of {v} to {indegree[v]}")
                 if indegree[v] == 0:
@@ -473,6 +568,7 @@ def api_prims():
         return jsonify({'error': 'Input must be a square adjacency matrix.'}), 400
     try:
         import heapq
+        matrix = normalize_matrix(matrix, diagonal_zero=True, treat_zero_as_inf=False)
         n = len(matrix)
         selected = [False]*n
         edges = []
@@ -481,7 +577,8 @@ def api_prims():
         steps = []
         while min_e:
             cost, u, frm = heapq.heappop(min_e)
-            if selected[u]: continue
+            if selected[u]:
+                continue
             selected[u] = True
             if frm != -1:
                 edges.append((frm, u, cost))
@@ -502,6 +599,7 @@ def api_kruskal():
     if not (isinstance(matrix, list) and all(isinstance(row, list) and len(row) == len(matrix) for row in matrix)):
         return jsonify({'error': 'Input must be a square adjacency matrix.'}), 400
     try:
+        matrix = normalize_matrix(matrix, diagonal_zero=True, treat_zero_as_inf=False)
         n = len(matrix)
         edges = []
         for i in range(n):
@@ -539,6 +637,7 @@ def api_dijkstra():
         return jsonify({'error': 'Input must be a square adjacency matrix.'}), 400
     try:
         import heapq
+        matrix = normalize_matrix(matrix, diagonal_zero=True, treat_zero_as_inf=False)
         n = len(matrix)
         dist = [float('inf')]*n
         prev = [None]*n
@@ -547,7 +646,8 @@ def api_dijkstra():
         steps = [f"Start from source {source}"]
         while hq:
             d, u = heapq.heappop(hq)
-            if d > dist[u]: continue
+            if d > dist[u]:
+                continue
             steps.append(f"Visit node {u} with current distance {d}")
             for v in range(n):
                 if matrix[u][v] and matrix[u][v] != float('inf'):
@@ -560,7 +660,8 @@ def api_dijkstra():
         # Reconstruct paths
         paths = []
         for t in range(n):
-            if dist[t] == float('inf'): continue
+            if dist[t] == float('inf'):
+                continue
             path = []
             x = t
             while x is not None:

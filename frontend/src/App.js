@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './App.css';
 
-const API_BASE = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_BASE || 'http://127.0.0.1:5000';
+// Update to use the Render backend URL (with env override for flexibility)
+const API_BASE = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_BASE || 'https://algorithm-analyze-dyas.onrender.com';
 
 const ALGORITHMS = [
   { label: 'Merge Sort (with Tree)', value: 'merge-sort' },
@@ -652,10 +653,12 @@ function MergeSortTree({ node, level = 0 }) {
 
 function MatrixTable({ matrix }) {
   if (!Array.isArray(matrix) || !matrix.length) return null;
+  // Normalize to 2D for rendering: if 1D, wrap as a single row
+  const normalized = Array.isArray(matrix[0]) ? matrix : [matrix];
   return (
     <table style={{ borderCollapse: 'collapse', margin: '16px auto', background: '#f8fafc', boxShadow: '0 2px 8px #0001' }}>
       <tbody>
-        {matrix.map((row, i) => (
+        {normalized.map((row, i) => (
           <tr key={i}>
             {row.map((cell, j) => (
               <td
@@ -670,7 +673,7 @@ function MatrixTable({ matrix }) {
                   textAlign: 'center'
                 }}
               >
-                {typeof cell === 'number' && !isFinite(cell) ? '∞' : cell}
+                {typeof cell === 'number' && !isFinite(cell) ? '∞' : Array.isArray(cell) ? JSON.stringify(cell) : cell}
               </td>
             ))}
           </tr>
