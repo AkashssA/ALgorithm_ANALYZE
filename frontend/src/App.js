@@ -656,30 +656,32 @@ function MatrixTable({ matrix }) {
   // Normalize to 2D for rendering: if 1D, wrap as a single row
   const normalized = Array.isArray(matrix[0]) ? matrix : [matrix];
   return (
-    <table style={{ borderCollapse: 'collapse', margin: '16px auto', background: '#f8fafc', boxShadow: '0 2px 8px #0001' }}>
-      <tbody>
-        {normalized.map((row, i) => (
-          <tr key={i}>
-            {row.map((cell, j) => (
-              <td
-                key={j}
-                style={{
-                  border: '1px solid #bbb',
-                  padding: '8px 14px',
-                  background: cell === 0 ? '#fff' : cell === 1 ? '#b2dfdb' : (typeof cell === 'number' && !isFinite(cell)) ? '#eee' : '#ffe082',
-                  color: (typeof cell === 'number' && !isFinite(cell)) ? '#888' : '#232f3e',
-                  fontWeight: 600,
-                  minWidth: 32,
-                  textAlign: 'center'
-                }}
-              >
-                {typeof cell === 'number' && !isFinite(cell) ? '∞' : Array.isArray(cell) ? JSON.stringify(cell) : cell}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
+      <table style={{ borderCollapse: 'collapse', margin: '16px auto', background: '#f8fafc', boxShadow: '0 2px 8px #0001' }}>
+        <tbody>
+          {normalized.map((row, i) => (
+            <tr key={i}>
+              {row.map((cell, j) => (
+                <td
+                  key={j}
+                  style={{
+                    border: '1px solid #bbb',
+                    padding: '8px 14px',
+                    background: cell === 0 ? '#fff' : cell === 1 ? '#b2dfdb' : (typeof cell === 'number' && !isFinite(cell)) ? '#eee' : '#ffe082',
+                    color: (typeof cell === 'number' && !isFinite(cell)) ? '#888' : '#232f3e',
+                    fontWeight: 600,
+                    minWidth: 32,
+                    textAlign: 'center'
+                  }}
+                >
+                  {typeof cell === 'number' && !isFinite(cell) ? '∞' : Array.isArray(cell) ? JSON.stringify(cell) : cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -1162,29 +1164,29 @@ function App() {
                           ? 'e.g. [ [1,2], [3,4], [0,6], [5,7], [8,9], [5,9] ]'
                           : 'e.g. 5, 2, 9, 1, 6'
                 }
-                style={{ marginLeft: 12, padding: 6, borderRadius: 4, width: 300 }}
+                style={{ marginLeft: 12, padding: 6, borderRadius: 4, width: '100%', maxWidth: 300 }}
               />
             )}
             {/* Knapsack fields */}
             {algorithm === 'knapsack' && (
               <span>
                 <label style={{ fontWeight: 600, color: '#232f3e', marginLeft: 8 }}>Weights:</label>
-                <input type="text" value={knapsackWeights} onChange={e => setKnapsackWeights(e.target.value)} placeholder="e.g. 2, 3, 4, 5" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: 120 }} />
+                <input type="text" value={knapsackWeights} onChange={e => setKnapsackWeights(e.target.value)} placeholder="e.g. 2, 3, 4, 5" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: '100%', maxWidth: 160 }} />
                 <label style={{ fontWeight: 600, color: '#232f3e', marginLeft: 8 }}>Profits:</label>
-                <input type="text" value={knapsackProfits} onChange={e => setKnapsackProfits(e.target.value)} placeholder="e.g. 3, 4, 5, 6" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: 120 }} />
+                <input type="text" value={knapsackProfits} onChange={e => setKnapsackProfits(e.target.value)} placeholder="e.g. 3, 4, 5, 6" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: '100%', maxWidth: 160 }} />
                 <label style={{ fontWeight: 600, color: '#232f3e', marginLeft: 8 }}>Capacity:</label>
-                <input type="number" value={knapsackCapacity} onChange={e => setKnapsackCapacity(e.target.value)} placeholder="e.g. 5" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: 80 }} />
+                <input type="number" value={knapsackCapacity} onChange={e => setKnapsackCapacity(e.target.value)} placeholder="e.g. 5" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: '100%', maxWidth: 120 }} />
               </span>
             )}
             {/* Graph algorithm fields */}
             {(algorithm === 'prims' || algorithm === 'kruskal' || algorithm === 'dijkstra') && (
               <span>
                 <label style={{ fontWeight: 600, color: '#232f3e', marginLeft: 8 }}>Adjacency Matrix:</label>
-                <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="e.g. [[0,2,0],[2,0,3],[0,3,0]] (0 or inf = no edge)" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: 300 }} />
+                <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="e.g. [[0,2,0],[2,0,3],[0,3,0]] (0 or inf = no edge)" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: '100%', maxWidth: 300 }} />
                 {algorithm === 'dijkstra' && (
                   <span style={{ marginLeft: 16 }}>
                     <label style={{ fontWeight: 600, color: '#232f3e' }}>Source:</label>
-                    <input type="number" value={dijkstraSource} onChange={e => setDijkstraSource(e.target.value)} min="0" style={{ marginLeft: 8, width: 60, padding: 4, borderRadius: 4 }} />
+                    <input type="number" value={dijkstraSource} onChange={e => setDijkstraSource(e.target.value)} min="0" style={{ marginLeft: 8, width: '100%', maxWidth: 80, padding: 4, borderRadius: 4 }} />
                   </span>
                 )}
               </span>
@@ -1273,11 +1275,11 @@ function App() {
           {(algorithm === 'prims' || algorithm === 'kruskal' || algorithm === 'dijkstra') && (
             <div style={{ marginTop: 16 }}>
               <label style={{ fontWeight: 600, color: '#232f3e' }}>Adjacency Matrix:</label>
-              <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="e.g. [[0,2,0],[2,0,3],[0,3,0]] (0 or inf = no edge)" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: 400 }} />
+              <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="e.g. [[0,2,0],[2,0,3],[0,3,0]] (0 or inf = no edge)" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: '100%', maxWidth: 400 }} />
               {algorithm === 'dijkstra' && (
                 <span style={{ marginLeft: 16 }}>
                   <label style={{ fontWeight: 600, color: '#232f3e' }}>Source:</label>
-                  <input type="number" value={dijkstraSource} onChange={e => setDijkstraSource(e.target.value)} min="0" style={{ marginLeft: 8, width: 60, padding: 4, borderRadius: 4 }} />
+                  <input type="number" value={dijkstraSource} onChange={e => setDijkstraSource(e.target.value)} min="0" style={{ marginLeft: 8, width: '100%', maxWidth: 80, padding: 4, borderRadius: 4 }} />
                 </span>
               )}
             </div>

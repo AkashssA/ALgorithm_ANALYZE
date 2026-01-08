@@ -36,3 +36,18 @@
     transform: rotate(360deg);
   }
 }
+
+@media (max-width: 600px) {
+  .App h1 {
+    font-size: 1.6rem !important;
+    letter-spacing: 1px !important;
+  }
+  .App main {
+    margin: 1rem !important;
+    padding: 1rem !important;
+  }
+  .App button {
+    width: 100%;
+    max-width: 320px;
+  }
+}
