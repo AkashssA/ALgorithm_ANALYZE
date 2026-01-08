@@ -12,6 +12,14 @@ CORS(app)
 # Get port from environment variable for deployment platforms like Render
 port = int(os.environ.get("PORT", 5000))
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({'status': 'ok', 'service': 'algorithm-analyze'})
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok'})
+
 # ---------------- Helper Utilities for Input Normalization -----------------
 
 def normalize_matrix(matrix, diagonal_zero=True, treat_zero_as_inf=False):
