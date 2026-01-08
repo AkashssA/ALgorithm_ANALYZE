@@ -1112,22 +1112,22 @@ function App() {
       <main style={{ maxWidth: 900, margin: '2rem auto', padding: '2rem', background: 'white', borderRadius: 16, boxShadow: '0 4px 24px #0001' }}>
         <IntroCarousel />
         <h2 style={{ color: '#232f3e' }}>Algorithm Visualizer</h2>
-        <div style={{ margin: '2rem 0', padding: '1rem', background: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
+        <div style={{ margin: '2rem 0', padding: '1rem', background: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb', display: 'grid', gap: 12, textAlign: 'left' }}>
           <label style={{ fontWeight: 600, color: '#232f3e' }}>Select Algorithm:</label>
-          <select value={algorithm} onChange={e => setAlgorithm(e.target.value)} style={{ marginLeft: 12, padding: 6, borderRadius: 4 }}>
+          <select value={algorithm} onChange={e => setAlgorithm(e.target.value)} style={{ padding: 6, borderRadius: 4, width: '100%' }}>
             {ALGORITHMS.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
           </select>
           <button
-            style={{ marginLeft: 16, padding: '4px 12px', background: '#e0e7ef', color: '#232f3e', border: '1px solid #bbb', borderRadius: 4, fontWeight: 600, cursor: 'pointer' }}
+            style={{ padding: '8px 12px', background: '#e0e7ef', color: '#232f3e', border: '1px solid #bbb', borderRadius: 4, fontWeight: 600, cursor: 'pointer', width: '100%' }}
             onClick={() => setShowInfo(true)}
             title="Show algorithm info"
           >
             ℹ️ Info
           </button>
           {algorithm === 'quick-sort' && (
-            <span style={{ marginLeft: 24 }}>
+            <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <label style={{ fontWeight: 600, color: '#232f3e', marginRight: 8 }}>Pivot:</label>
-              <select value={pivotStrategy} onChange={e => setPivotStrategy(e.target.value)} style={{ padding: 4, borderRadius: 4 }}>
+              <select value={pivotStrategy} onChange={e => setPivotStrategy(e.target.value)} style={{ padding: 4, borderRadius: 4, flex: '1 1 160px' }}>
                 <option value="first">First Element</option>
                 <option value="last">Last Element</option>
                 <option value="random">Random</option>
@@ -1140,7 +1140,7 @@ function App() {
                   value={customPivot}
                   onChange={e => setCustomPivot(e.target.value)}
                   placeholder="Index"
-                  style={{ marginLeft: 8, width: 60, padding: 4, borderRadius: 4 }}
+                  style={{ width: '100%', maxWidth: 100, padding: 4, borderRadius: 4 }}
                 />
               )}
             </span>
@@ -1164,29 +1164,29 @@ function App() {
                           ? 'e.g. [ [1,2], [3,4], [0,6], [5,7], [8,9], [5,9] ]'
                           : 'e.g. 5, 2, 9, 1, 6'
                 }
-                style={{ marginLeft: 12, padding: 6, borderRadius: 4, width: '100%', maxWidth: 300 }}
+                style={{ padding: 6, borderRadius: 4, width: '100%' }}
               />
             )}
             {/* Knapsack fields */}
             {algorithm === 'knapsack' && (
-              <span>
-                <label style={{ fontWeight: 600, color: '#232f3e', marginLeft: 8 }}>Weights:</label>
-                <input type="text" value={knapsackWeights} onChange={e => setKnapsackWeights(e.target.value)} placeholder="e.g. 2, 3, 4, 5" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: '100%', maxWidth: 160 }} />
-                <label style={{ fontWeight: 600, color: '#232f3e', marginLeft: 8 }}>Profits:</label>
-                <input type="text" value={knapsackProfits} onChange={e => setKnapsackProfits(e.target.value)} placeholder="e.g. 3, 4, 5, 6" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: '100%', maxWidth: 160 }} />
-                <label style={{ fontWeight: 600, color: '#232f3e', marginLeft: 8 }}>Capacity:</label>
-                <input type="number" value={knapsackCapacity} onChange={e => setKnapsackCapacity(e.target.value)} placeholder="e.g. 5" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: '100%', maxWidth: 120 }} />
+              <span style={{ display: 'grid', gap: 8 }}>
+                <label style={{ fontWeight: 600, color: '#232f3e' }}>Weights:</label>
+                <input type="text" value={knapsackWeights} onChange={e => setKnapsackWeights(e.target.value)} placeholder="e.g. 2, 3, 4, 5" style={{ padding: 6, borderRadius: 4, width: '100%' }} />
+                <label style={{ fontWeight: 600, color: '#232f3e' }}>Profits:</label>
+                <input type="text" value={knapsackProfits} onChange={e => setKnapsackProfits(e.target.value)} placeholder="e.g. 3, 4, 5, 6" style={{ padding: 6, borderRadius: 4, width: '100%' }} />
+                <label style={{ fontWeight: 600, color: '#232f3e' }}>Capacity:</label>
+                <input type="number" value={knapsackCapacity} onChange={e => setKnapsackCapacity(e.target.value)} placeholder="e.g. 5" style={{ padding: 6, borderRadius: 4, width: '100%' }} />
               </span>
             )}
             {/* Graph algorithm fields */}
             {(algorithm === 'prims' || algorithm === 'kruskal' || algorithm === 'dijkstra') && (
-              <span>
-                <label style={{ fontWeight: 600, color: '#232f3e', marginLeft: 8 }}>Adjacency Matrix:</label>
-                <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="e.g. [[0,2,0],[2,0,3],[0,3,0]] (0 or inf = no edge)" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: '100%', maxWidth: 300 }} />
+              <span style={{ display: 'grid', gap: 8 }}>
+                <label style={{ fontWeight: 600, color: '#232f3e' }}>Adjacency Matrix:</label>
+                <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="e.g. [[0,2,0],[2,0,3],[0,3,0]] (0 or inf = no edge)" style={{ padding: 6, borderRadius: 4, width: '100%' }} />
                 {algorithm === 'dijkstra' && (
-                  <span style={{ marginLeft: 16 }}>
+                  <span style={{ display: 'grid', gap: 8 }}>
                     <label style={{ fontWeight: 600, color: '#232f3e' }}>Source:</label>
-                    <input type="number" value={dijkstraSource} onChange={e => setDijkstraSource(e.target.value)} min="0" style={{ marginLeft: 8, width: '100%', maxWidth: 80, padding: 4, borderRadius: 4 }} />
+                    <input type="number" value={dijkstraSource} onChange={e => setDijkstraSource(e.target.value)} min="0" style={{ width: '100%', padding: 6, borderRadius: 4 }} />
                   </span>
                 )}
               </span>
@@ -1206,7 +1206,8 @@ function App() {
                 fontSize: '1.1rem',
                 cursor: 'pointer',
                 boxShadow: '0 2px 8px #0002',
-                opacity: loading ? 0.7 : 1
+                opacity: loading ? 0.7 : 1,
+                width: '100%'
               }}
               disabled={loading}
             >
@@ -1237,13 +1238,13 @@ function App() {
                 </div>
               </div>
             )}
-            {(algorithm === 'floyd-warshall' || algorithm === 'warshall' || algorithm === 'prims' || algorithm === 'kruskal' || algorithm === 'dijkstra') && treeData && Array.isArray(treeData) && (
+            {(algorithm === 'floyd-warshall' || algorithm === 'warshall' || algorithm === 'prims' || algorithm === 'kruskal' || algorithm === 'dijkstra' || algorithm === 'knapsack') && treeData && Array.isArray(treeData) && (
               <div style={{ marginTop: 24 }}>
                 <label style={{ fontWeight: 600, color: '#232f3e' }}>Matrix Visualization:</label>
                 <MatrixTable matrix={treeData} />
               </div>
             )}
-            {(algorithm === 'floyd-warshall' || algorithm === 'warshall' || algorithm === 'prims' || algorithm === 'kruskal' || algorithm === 'dijkstra') && !treeData && output && output.includes('[') && (
+            {(algorithm === 'floyd-warshall' || algorithm === 'warshall' || algorithm === 'prims' || algorithm === 'kruskal' || algorithm === 'dijkstra' || algorithm === 'knapsack') && !treeData && output && output.includes('[') && (
               <div style={{ marginTop: 24 }}>
                 <label style={{ fontWeight: 600, color: '#232f3e' }}>Matrix Visualization:</label>
                 <MatrixTable matrix={(() => { try { return JSON.parse(output.match(/\[.*\]/s)[0]); } catch { return null; } })()} />
@@ -1262,41 +1263,6 @@ function App() {
               <QuickSortDiagram steps={steps} stepIndex={stepIndex} />
             )}
           </div>
-          {algorithm === 'knapsack' && (
-            <div style={{ marginTop: 16 }}>
-              <label style={{ fontWeight: 600, color: '#232f3e' }}>Weights:</label>
-              <input type="text" value={knapsackWeights} onChange={e => setKnapsackWeights(e.target.value)} placeholder="e.g. 2, 3, 4, 5" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: 180 }} />
-              <label style={{ fontWeight: 600, color: '#232f3e', marginLeft: 16 }}>Profits:</label>
-              <input type="text" value={knapsackProfits} onChange={e => setKnapsackProfits(e.target.value)} placeholder="e.g. 3, 4, 5, 6" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: 180 }} />
-              <label style={{ fontWeight: 600, color: '#232f3e', marginLeft: 16 }}>Capacity:</label>
-              <input type="number" value={knapsackCapacity} onChange={e => setKnapsackCapacity(e.target.value)} placeholder="e.g. 5" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: 80 }} />
-            </div>
-          )}
-          {(algorithm === 'prims' || algorithm === 'kruskal' || algorithm === 'dijkstra') && (
-            <div style={{ marginTop: 16 }}>
-              <label style={{ fontWeight: 600, color: '#232f3e' }}>Adjacency Matrix:</label>
-              <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="e.g. [[0,2,0],[2,0,3],[0,3,0]] (0 or inf = no edge)" style={{ marginLeft: 8, padding: 6, borderRadius: 4, width: '100%', maxWidth: 400 }} />
-              {algorithm === 'dijkstra' && (
-                <span style={{ marginLeft: 16 }}>
-                  <label style={{ fontWeight: 600, color: '#232f3e' }}>Source:</label>
-                  <input type="number" value={dijkstraSource} onChange={e => setDijkstraSource(e.target.value)} min="0" style={{ marginLeft: 8, width: '100%', maxWidth: 80, padding: 4, borderRadius: 4 }} />
-                </span>
-              )}
-            </div>
-          )}
-          {/* Matrix/Table Visualization for Knapsack and Graph Algorithms */}
-          {(algorithm === 'knapsack' && treeData && Array.isArray(treeData)) && (
-            <div style={{ marginTop: 24 }}>
-              <label style={{ fontWeight: 600, color: '#232f3e' }}>DP Matrix:</label>
-              <MatrixTable matrix={treeData} />
-            </div>
-          )}
-          {((algorithm === 'prims' || algorithm === 'kruskal' || algorithm === 'dijkstra') && input && input.startsWith('[')) && (
-            <div style={{ marginTop: 24 }}>
-              <label style={{ fontWeight: 600, color: '#232f3e' }}>Input Matrix:</label>
-              <MatrixTable matrix={(() => { try { return JSON.parse(input); } catch { return null; } })()} />
-            </div>
-          )}
           {treeData && algorithm === 'merge-sort' && (
             <div style={{ marginTop: 30 }}>
               <label style={{ fontWeight: 600, color: '#232f3e' }}>Tree Visualization:</label>
